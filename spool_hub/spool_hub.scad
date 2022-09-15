@@ -7,14 +7,14 @@ flange_height=8; //configurable
 bearing_width=7;
 total_diameter=hub_diameter+2*flange_height;
 bore_diameter=8;
-inner_length=60.6; //3d solutech spool measures 60.3mm A bit of tolerance is fine.
+inner_length=62; //3d solutech spool measures 60.3mm A bit of tolerance is fine.
 rail_width=10;
 rail_thickness=2.5;
 bearing_overlap=1.6; //lip width behind the bearing
 bore_tolerance=0.8;
 taper_width=7; //how wide is the taper section behind the bearing.
 taper_gap=(bearing_diameter-2*bearing_overlap)/2-(bore_diameter+bore_tolerance)/2; //how much to taper in radially
-half_core_length=inner_length/2-taper_width;
+half_core_length=inner_length/2+rail_thickness-bearing_width-taper_width;
 tab_thickness=3;
 tab_width=5;
 tab_side_clearance=1;
@@ -32,7 +32,7 @@ module half_hub() {
             rotate_extrude()
                 translate([total_diameter/2,0])
                     scale([2*flange_height,2*(bearing_width-rail_thickness)])
-                        circle(d=1);
+                        square(1,center=true);
         //cut out some excess weight between bearing and hub
         translate([0,0,bearing_width])
             rotate_extrude()
@@ -51,7 +51,7 @@ module half_hub() {
     
     //continue rail surface for desired distance
     translate([0,0,bearing_width])
-        linear_extrude(rail_width)
+        linear_extrude(rail_width-bearing_width+rail_thickness)
             difference() {
                 circle(d=hub_diameter);
                 circle(d=hub_diameter-2*rail_thickness);
@@ -105,7 +105,7 @@ module half_hub() {
                         translate([0,tab_width/2,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance])
                         rotate([90,0,0])
                             linear_extrude(tab_width)
-                                polygon([[-tab_thickness*3/2,0],
+                                polygon([[-tab_thickness*5/4,0],
                                     [-tab_thickness/2,tab_thickness],
                                     [tab_thickness/2,tab_thickness],
                                     [tab_thickness/2,0]]);
@@ -116,12 +116,13 @@ module half_hub() {
                     linear_extrude(tab_width)
                     polygon([
                         [-tab_thickness,0],
-                        [0,half_core_length+taper_width-rail_thickness],
+                        [0,2*half_core_length+taper_width-2*rail_thickness],
                         [0,0]]);
                     
             }
     }
 }
+translate([0,0,-rail_thickness])
 difference() {
     union() {
         half_hub();
