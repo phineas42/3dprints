@@ -1,0 +1,42 @@
+Prior to recent configuration, I had found that K=0.06 worked well for 3D Solutech PLA
+
+Determined Best K factor to be 0.050 for
+	PLA
+	Black
+	3D Solutech
+	195 degrees nozzle
+	60 degrees bed
+	Microswiss direct drive
+	PEI bed
+	slow speed 20
+	fast speed 150
+	travel speed 250
+	retraction distance 0.5
+
+
+Determined Best K factor to be 0.10 for 
+	PETG
+	Red translucent
+	3D Solutech
+	240 degrees nozzle
+	75 degrees bed
+	Microswiss direct drive
+	Blue tape bed
+	slow speed 20
+	fast speeed 150
+	travel speed 250
+	retraction distance 0.5
+
+Determined Best K factor to be 0.36 for
+	TPU
+	White
+	Tri-Gorilla Anycubic
+	(forgot to take note of printing speeds and temps)
+	125 degrees nozzle
+	60 degrees bed
+	Microswiss direct drive
+	Blue tape bed
+	E Steps 140.12
+	(K value 0.24 for E Steps calibration)
+	No retraction
+	Loosen the extruder all the way up but so that no threads are showing.
