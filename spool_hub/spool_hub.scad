@@ -1,13 +1,19 @@
 //mating roller
 //convert two bearings into a spool roller
-$fn=360; //TODO: convert this to 360 for production
+$fn=36; //TODO: convert this to 360 for production
+inner_length=41;
 hub_diameter=57.2; //spool hub inner diameter
+
+//Known inner_length and hub_diameter values:
+//3D Solutech 1kg: [62, 57.2]
+//trigorilla 0.5kg TPU: [41, 57.2]
+//Overture 1kg PETG (plastic spool): [69, 55.2]
+//Overture 1kg TPU (cardboard spool): [67, 54.4]
 bearing_diameter=22; //outer diameter of bearing
 flange_height=8; //configurable
 bearing_width=7;
 total_diameter=hub_diameter+2*flange_height;
 bore_diameter=8;
-inner_length=62; //3d solutech spool measures 60.3mm A bit of tolerance is fine.
 rail_width=10;
 rail_thickness=2.5;
 bearing_overlap=1.6; //lip width behind the bearing
