@@ -1,6 +1,6 @@
 //mating roller
 //convert two bearings into a spool roller
-$fn=360; //TODO: convert this to 360 for production
+$fn=36; //TODO: convert this to 360 for production
 hub_diameter=57.2; //spool hub inner diameter
 bearing_diameter=22; //outer diameter of bearing
 flange_height=8; //configurable
@@ -18,7 +18,7 @@ half_core_length=inner_length/2-taper_width;
 tab_thickness=3;
 tab_width=5;
 tab_side_clearance=1;
-tab_end_clearance=0.2;
+tab_end_clearance=0.1;
 module half_hub() {
     difference() {
         //create a cylinder for the outer ear, subtract spot for bearing.
@@ -76,33 +76,55 @@ module half_hub() {
                 translate([-total_diameter/2,-total_diameter/2]) square(total_diameter, center=true);
             }
     //inner core
-    translate([0,0,bearing_width+taper_width])
-        linear_extrude(half_core_length)
+    translate([0,0,bearing_width+taper_width]) {
+        linear_extrude(half_core_length/2)
             difference() {
                 circle(d=bore_diameter+bore_tolerance+2*rail_thickness);
                 circle(d=bore_diameter+bore_tolerance);
             }
+        for(r=[0,180])
+            translate([0,0,half_core_length/2])
+                linear_extrude(half_core_length)
+                    difference() {
+                        circle(d=bore_diameter+bore_tolerance+2*rail_thickness);
+                        circle(d=bore_diameter+bore_tolerance);
+                        for(r2=[45,225]) rotate([0,0,r2])
+                            square(bore_diameter/2+bore_tolerance/2+rail_thickness);
+                    }
+    }
     //mating_sticks
     for(r=[0,180]) {
         rotate([0,0,r])
-            translate([bearing_diameter/2+tab_thickness/2+rail_thickness,0,0])
-                union() {
+            union() {
+                translate([bearing_diameter/2+tab_thickness/2+rail_thickness,0,0])
+                    union() {
+                        //main stick
                         linear_extrude(2*(bearing_width+taper_width+half_core_length)+tab_end_clearance)
-                        square([tab_thickness,tab_width],center=true);
+                            square([tab_thickness,tab_width],center=true);
                     //hook
-                    translate([0,tab_width/2,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance])
+                        translate([0,tab_width/2,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance])
+                        rotate([90,0,0])
+                            linear_extrude(tab_width)
+                                polygon([[-tab_thickness*3/2,0],
+                                    [-tab_thickness/2,tab_thickness],
+                                    [tab_thickness/2,tab_thickness],
+                                    [tab_thickness/2,0]]);
+                    }
+                //stiffening brace
+                    translate([bearing_diameter/2+tab_thickness,tab_width/2,bearing_width+rail_thickness])
                     rotate([90,0,0])
                     linear_extrude(tab_width)
-                    polygon([[-tab_thickness,0],
-                             [-tab_thickness/2,tab_thickness],
-                             [tab_thickness/2,tab_thickness],
-                             [tab_thickness/2,0]]);
-                }
+                    polygon([
+                        [-tab_thickness,0],
+                        [0,half_core_length+taper_width-rail_thickness],
+                        [0,0]]);
+                    
+            }
     }
 }
 difference() {
     union() {
-        !half_hub();
+        half_hub();
         %translate([0,0,2*(bearing_width+taper_width+half_core_length)])
             rotate([0,180,90])
                 half_hub();
