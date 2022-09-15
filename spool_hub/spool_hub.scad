@@ -1,6 +1,6 @@
 //mating roller
 //convert two bearings into a spool roller
-$fn=36; //TODO: convert this to 360 for production
+$fn=360; //TODO: convert this to 360 for production
 hub_diameter=57.2; //spool hub inner diameter
 bearing_diameter=22; //outer diameter of bearing
 flange_height=8; //configurable
@@ -16,7 +16,7 @@ taper_width=7; //how wide is the taper section behind the bearing.
 taper_gap=(bearing_diameter-2*bearing_overlap)/2-(bore_diameter+bore_tolerance)/2; //how much to taper in radially
 half_core_length=inner_length/2+rail_thickness-bearing_width-taper_width;
 tab_thickness=3;
-tab_width=5;
+tab_width=8.5;
 tab_side_clearance=1;
 tab_end_clearance=0.1;
 module half_hub() {
@@ -83,7 +83,7 @@ module half_hub() {
                 circle(d=bore_diameter+bore_tolerance);
             }
         for(r=[0,180])
-            translate([0,0,half_core_length/2])
+            translate([0,0,half_core_length/2]) //extends beyond half-way
                 linear_extrude(half_core_length)
                     difference() {
                         circle(d=bore_diameter+bore_tolerance+2*rail_thickness);
@@ -95,33 +95,32 @@ module half_hub() {
     //mating_sticks
     for(r=[0,180]) {
         rotate([0,0,r])
-            union() {
-                translate([bearing_diameter/2+tab_thickness/2+rail_thickness,0,0])
-                    union() {
-                        //main stick
-                        linear_extrude(2*(bearing_width+taper_width+half_core_length)+tab_end_clearance)
-                            square([tab_thickness,tab_width],center=true);
-                    //hook
-                        translate([0,tab_width/2,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance])
-                        rotate([90,0,0])
-                            linear_extrude(tab_width)
-                                polygon([[-tab_thickness*5/4,0],
-                                    [-tab_thickness/2,tab_thickness],
-                                    [tab_thickness/2,tab_thickness],
-                                    [tab_thickness/2,0]]);
-                    }
-                //stiffening brace
-                    translate([bearing_diameter/2+tab_thickness,tab_width/2,bearing_width+rail_thickness])
-                    rotate([90,0,0])
-                    linear_extrude(tab_width)
+            translate([0,tab_width/2,0]) rotate([90,0,0]) linear_extrude(tab_width)
+                difference() {
                     polygon([
-                        [-tab_thickness,0],
-                        [0,2*half_core_length+taper_width-2*rail_thickness],
-                        [0,0]]);
-                    
-            }
+                        [(bore_diameter+bore_tolerance)/2,bearing_width],
+                        [(bore_diameter+bore_tolerance)/2,bearing_width+taper_width+3/2*half_core_length],
+                        [bearing_diameter/2,bearing_width+taper_width+3/2*half_core_length],
+                        [bearing_diameter/2+rail_thickness,bearing_width+taper_width+15/8*half_core_length],
+                        [bearing_diameter/2+rail_thickness,bearing_width+taper_width+2*half_core_length+taper_width-rail_thickness],
+                        [bearing_diameter/2+rail_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance],
+                        [bearing_diameter/2+rail_thickness-3/4*tab_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance],
+                        [bearing_diameter/2+rail_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance+tab_thickness],
+                        [bearing_diameter/2+rail_thickness+tab_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance+tab_thickness],
+                        [bearing_diameter/2+rail_thickness+tab_thickness,bearing_width+taper_width+3/2*half_core_length],
+                        [bearing_diameter/2+rail_thickness+tab_thickness,0],
+                        [bearing_diameter/2,0],
+                        [bearing_diameter/2,bearing_width]
+                    ]);
+                    translate([taper_gap+(bore_diameter+bore_tolerance)/2,bearing_width+taper_width])
+                        difference() {
+                            translate([-total_diameter/2,-total_diameter/2]) square(total_diameter, center=true);
+                            scale([taper_gap,taper_width]) circle(r=1);
+                        }
+                }
     }
 }
+
 translate([0,0,-rail_thickness])
 difference() {
     union() {
