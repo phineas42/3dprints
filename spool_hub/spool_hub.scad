@@ -1,21 +1,24 @@
+//mating roller
 //convert two bearings into a spool roller
-$fn=72; //TODO: convert this to 360 for production
+$fn=360; //TODO: convert this to 360 for production
 hub_diameter=57.2; //spool hub inner diameter
 bearing_diameter=22; //outer diameter of bearing
 flange_height=8; //configurable
 bearing_width=7;
 total_diameter=hub_diameter+2*flange_height;
 bore_diameter=8;
-lip_width=0.4;
-lip_height=0.6;
-inner_length=62;
-groove_diameter=8;
+inner_length=60.6; //3d solutech spool measures 60.3mm A bit of tolerance is fine.
 rail_width=10;
 rail_thickness=2.5;
 bearing_overlap=1.6; //lip width behind the bearing
+bore_tolerance=0.8;
 taper_width=7; //how wide is the taper section behind the bearing.
-taper_gap=(bearing_diameter-2*bearing_overlap)/2-bore_diameter/2; //how much to taper in radially
+taper_gap=(bearing_diameter-2*bearing_overlap)/2-(bore_diameter+bore_tolerance)/2; //how much to taper in radially
 half_core_length=inner_length/2-taper_width;
+tab_thickness=3;
+tab_width=5;
+tab_side_clearance=1;
+tab_end_clearance=0.2;
 module half_hub() {
     difference() {
         //create a cylinder for the outer ear, subtract spot for bearing.
@@ -36,8 +39,15 @@ module half_hub() {
                 translate([bearing_diameter/2+rail_thickness+(hub_diameter/2-bearing_diameter/2-2*rail_thickness)/2,0,])
                     scale([hub_diameter/2-bearing_diameter/2-2*rail_thickness,2*(bearing_width-rail_thickness)])
                         circle(d=1);
+            
+        //mating_holes
+        for(r=[90,270]) {
+            linear_extrude(2*(bearing_width+taper_width+half_core_length))
+                rotate([0,0,r])
+                    translate([bearing_diameter/2+tab_thickness+rail_thickness,0,0])
+                        square([tab_thickness*2,tab_width+tab_side_clearance],center=true);
+        }
     }
-    //add a flange
     
     //continue rail surface for desired distance
     translate([0,0,bearing_width])
@@ -67,24 +77,36 @@ module half_hub() {
             }
     //inner core
     translate([0,0,bearing_width+taper_width])
-    difference() {
-        cylinder(h=half_core_length, d=bore_diameter+2*rail_thickness);
-        cylinder(h=half_core_length, d=bore_diameter);
+        linear_extrude(half_core_length)
+            difference() {
+                circle(d=bore_diameter+bore_tolerance+2*rail_thickness);
+                circle(d=bore_diameter+bore_tolerance);
+            }
+    //mating_sticks
+    for(r=[0,180]) {
+        rotate([0,0,r])
+            translate([bearing_diameter/2+tab_thickness/2+rail_thickness,0,0])
+                union() {
+                        linear_extrude(2*(bearing_width+taper_width+half_core_length)+tab_end_clearance)
+                        square([tab_thickness,tab_width],center=true);
+                    //hook
+                    translate([0,tab_width/2,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance])
+                    rotate([90,0,0])
+                    linear_extrude(tab_width)
+                    polygon([[-tab_thickness,0],
+                             [-tab_thickness/2,tab_thickness],
+                             [tab_thickness/2,tab_thickness],
+                             [tab_thickness/2,0]]);
+                }
     }
-            
 }
 difference() {
     union() {
-        half_hub();
+        !half_hub();
         %translate([0,0,2*(bearing_width+taper_width+half_core_length)])
-            rotate([0,180,0])
+            rotate([0,180,90])
                 half_hub();
     }
-    translate([-50,-100,0])
-        cube(100,center=false);
+    //translate([-50,-100,0])
+    //    cube(100,center=false);
 }
-//translate([0,0,bearing_width/2])
-//difference() {
-//    cylinder(h=inner_length,d=total_diameter-groove_diameter);
-//    cylinder(h=inner_length,d=bearing_diameter);
-//}
