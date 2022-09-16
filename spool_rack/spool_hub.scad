@@ -7,8 +7,8 @@ hub_diameter=55.2; //spool hub inner diameter
 //Known inner_length and hub_diameter values:
 //3D Solutech 1kg: [62, 57.2]
 //trigorilla 0.5kg TPU: [41, 57.2]
-//Overture 1kg PETG (plastic spool): [69, 55.2]
-//Overture 1kg TPU (cardboard spool): [68, 54.4]
+//Overture 1kg PETG (plastic spool): [69, 55.2] //55.2 IS TOO TIGHT
+//Overture 1kg TPU (cardboard spool): [67, 54.4]
 bearing_diameter=22; //outer diameter of bearing
 flange_height=8; //configurable
 bearing_width=7;
