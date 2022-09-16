@@ -1,14 +1,14 @@
 //mating roller
 //convert two bearings into a spool roller
-$fn=36; //TODO: convert this to 360 for production
-inner_length=41;
-hub_diameter=57.2; //spool hub inner diameter
+$fn=360; //TODO: convert this to 360 for production
+inner_length=69;
+hub_diameter=55.2; //spool hub inner diameter
 
 //Known inner_length and hub_diameter values:
 //3D Solutech 1kg: [62, 57.2]
 //trigorilla 0.5kg TPU: [41, 57.2]
 //Overture 1kg PETG (plastic spool): [69, 55.2]
-//Overture 1kg TPU (cardboard spool): [67, 54.4]
+//Overture 1kg TPU (cardboard spool): [68, 54.4]
 bearing_diameter=22; //outer diameter of bearing
 flange_height=8; //configurable
 bearing_width=7;
@@ -105,13 +105,14 @@ module half_hub() {
                 difference() {
                     polygon([
                         [(bore_diameter+bore_tolerance)/2,bearing_width],
-                        [(bore_diameter+bore_tolerance)/2,bearing_width+taper_width+3/2*half_core_length],
-                        [bearing_diameter/2,bearing_width+taper_width+3/2*half_core_length],
-                        [bearing_diameter/2+rail_thickness,bearing_width+taper_width+15/8*half_core_length],
+                        [(bore_diameter+bore_tolerance)/2,bearing_width+taper_width+1/2*half_core_length],
+                        [bearing_diameter/2,bearing_width+taper_width+1/2*half_core_length],
+                        [bearing_diameter/2+rail_thickness,bearing_width+taper_width+half_core_length],
                         [bearing_diameter/2+rail_thickness,bearing_width+taper_width+2*half_core_length+taper_width-rail_thickness],
                         [bearing_diameter/2+rail_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance],
-                        [bearing_diameter/2+rail_thickness-3/4*tab_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance],
-                        [bearing_diameter/2+rail_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance+tab_thickness],
+                        //clip portion of tab:
+                        [bearing_diameter/2+rail_thickness-1/4*tab_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance],
+                        [bearing_diameter/2+rail_thickness+1/4*tab_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance+tab_thickness],
                         [bearing_diameter/2+rail_thickness+tab_thickness,2*(bearing_width+taper_width+half_core_length)+tab_end_clearance+tab_thickness],
                         [bearing_diameter/2+rail_thickness+tab_thickness,bearing_width+taper_width+3/2*half_core_length],
                         [bearing_diameter/2+rail_thickness+tab_thickness,0],
